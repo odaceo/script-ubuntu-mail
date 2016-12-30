@@ -33,8 +33,9 @@ root: ${MailRootAddress}
 EOF
 
 # Rewrite the root outgoing address mail
+# TODO: http://serverfault.com/questions/147921/forcing-the-from-address-when-postfix-relays-over-smtp
 cat <<EOF | sudo tee /etc/postfix/generic
-@${MailHostname} ${MailRootAddress}
+root ${MailRootAddress}
 EOF
 
 # Rebuild the postfix lookup tables
@@ -53,6 +54,6 @@ sudo systemctl enable postfix
 sudo systemctl restart postfix
 
 # Send email to root
-mail -s "MTA / ${MailHostname}" root <<EOF
+sudo mail -s "MTA / ${MailHostname}" root <<EOF
 Server ${MailHostname} can send email on behalf of root.
 EOF
