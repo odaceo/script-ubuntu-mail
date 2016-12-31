@@ -33,7 +33,6 @@ root: ${MailRootAddress}
 EOF
 
 # Rewrite the root outgoing address mail
-# TODO: http://serverfault.com/questions/147921/forcing-the-from-address-when-postfix-relays-over-smtp
 cat <<EOF | sudo tee /etc/postfix/generic
 root ${MailRootAddress}
 EOF
