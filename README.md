@@ -1,4 +1,4 @@
-# Script | Ubuntu | Mail Transfer Agent
+# Script :: Ubuntu :: Mail Transfer Agent
 
 [![License](https://img.shields.io/github/license/odaceo/script-ubuntu-mail.svg)](LICENSE)
 
