@@ -15,26 +15,26 @@
 # limitations under the License.
 
 # Init variables
-MailRootAddress=${1}
-MailHostname=`hostname --fqdn`
+MAIL_ROOT_ADDRESS=${1}
+MAIL_HOSTNAME=`hostname --fqdn`
 
 # Check preconditions
-if [ -z "${MailRootAddress}" ]; then
+if [ -z "${MAIL_ROOT_ADDRESS}" ]; then
     echo 'The mail root address is required.'
     exit 1
 fi
 
 # Generate the Postifx configuration
 sudo debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
-sudo debconf-set-selections <<< "postfix postfix/mailname string ${MailHostname}"
-sudo debconf-set-selections <<< "postfix postfix/root_address string ${MailRootAddress}"
-sudo debconf-set-selections <<< "postfix postfix/destinations string ${MailHostname}, localhost"
+sudo debconf-set-selections <<< "postfix postfix/mailname string ${MAIL_HOSTNAME}"
+sudo debconf-set-selections <<< "postfix postfix/root_address string ${MAIL_ROOT_ADDRESS}"
+sudo debconf-set-selections <<< "postfix postfix/destinations string ${MAIL_HOSTNAME}, localhost"
 
 # Update your local package index
 sudo apt-get update
 
 # Install the Postfix package
-sudo apt-get -y install mailutils
+sudo apt-get install -y mailutils
 
 # Configure the network interface addresses that this mail system receives mail on
 sudo postconf -e "inet_interfaces = loopback-only"
@@ -43,12 +43,12 @@ sudo postconf -e "inet_interfaces = loopback-only"
 cat <<EOF | sudo tee /etc/aliases
 # See man 5 aliases for format
 postmaster: root
-root: ${MailRootAddress}
+root: ${MAIL_ROOT_ADDRESS}
 EOF
 
 # Rewrite the root outgoing address mail
 cat <<EOF | sudo tee /etc/postfix/generic
-root ${MailRootAddress}
+root ${MAIL_ROOT_ADDRESS}
 EOF
 
 # Rebuild the postfix lookup tables
@@ -67,6 +67,6 @@ sudo systemctl enable postfix
 sudo systemctl restart postfix
 
 # Send email to root
-sudo mail -s "MTA / ${MailHostname}" root <<EOF
-Server ${MailHostname} can send email on behalf of root.
+sudo mail -s "MTA / ${MAIL_HOSTNAME}" root <<EOF
+Server ${MAIL_HOSTNAME} can send email on behalf of root.
 EOF
